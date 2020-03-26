@@ -1,7 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 
 function preprocessCanvas(canvas) {
-  console.log("canvas %o", canvas.current);
   // Preprocess image for the network
   let tensor = tf
     .browser

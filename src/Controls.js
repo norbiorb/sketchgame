@@ -1,14 +1,13 @@
 import React, { useEffect, useContext } from "react";
-import { AppContext } from './App';
-import { PredictionContext } from './Round';
+import { GameContext } from './Game';
+import { RoundContext } from './Round';
 import { getPrediction } from "./helpers.js";
-function Controls(props) {
-  const { model, ref, labels } = useContext(AppContext);
-  const { prediction, setPrediction } = useContext(PredictionContext);
+function Controls() {
+  const { model, ref, labels } = useContext(GameContext);
+  const { prediction, setPrediction } = useContext(RoundContext);
 
   useEffect(() => {
     console.log(prediction);
-
   });
 
   return (

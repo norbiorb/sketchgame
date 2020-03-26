@@ -1,39 +1,21 @@
-import React, { useReducer } from "react";
-import { useRounds } from './Round'; 
+import React from "react";
+import { Link } from "react-router-dom";
 
-const labels = require("./labels.json");
-
-const AppContext = React.createContext({});
-
-const ref = React.createRef();
-
-const initialPoints = 0;
-
-const reducePoints = (pointsState, action) => {
-  switch(action.type) {
-    case 'increment': 
-      return pointsState++;
-    case 'reset':
-      return initialPoints;
-    default:
-      return pointsState;
-  }
-}
-
-const App = ({ model }) => {
-
-  const [ dispatch] = useReducer(initialPoints, reducePoints);
-
+const App = () => {
   return (
     <div>
-      <AppContext.Provider value={{ model, ref, labels, dispatch }}>
-        {
-          useRounds(20, labels)
-        }
-      </AppContext.Provider>
+      <div>Sketch</div>
+      <div>This game has been modeled-off Google's  
+         &nbsp;<a href="https://quickdraw.withgoogle.com">Quick, Draw! </a> game, and uses a sampling 
+        from the Quick Draw! <a href="https://quickdraw.withgoogle.com/data">dataset</a>.</div>
+        <div>
+          Brought to you by the EPFL Extension School.
+        </div>
+          <div>
+            <Link to="/game">Play Game</Link>
+          </div>
     </div>
   )
 }
 
 export default App;
-export { AppContext };

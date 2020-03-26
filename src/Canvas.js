@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from 'react';
 import { getPrediction } from "./helpers.js";
-import { AppContext } from './App';
-import { PredictionContext } from './Round';
+import { GameContext } from './Game';
+import { RoundContext } from './Round';
 
 const Canvas = React.forwardRef(() => {
 
-  const { model, ref, labels } = useContext(AppContext);
-  const { setPrediction } = useContext(PredictionContext);
+  const { model, ref, labels } = useContext(GameContext);
+  const { setPrediction } = useContext(RoundContext);
 
   let mouseDown = false;
   let lastX;
@@ -63,6 +63,7 @@ const Canvas = React.forwardRef(() => {
       onMouseDown={() => (mouseDown = true)}
       onMouseUp={handleMouseup}
       onMouseMove={e => handleMousemove(e)}
+      style={{ border: '1px solid #000000' }} 
     />
   );
 });
