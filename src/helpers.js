@@ -1,6 +1,7 @@
 import * as tf from "@tensorflow/tfjs";
 
 function preprocessCanvas(canvas) {
+  console.log('preprocessCanvas');
   // Preprocess image for the network
   let tensor = tf
     .browser
@@ -14,8 +15,15 @@ function preprocessCanvas(canvas) {
 }
 
 export function getPrediction(canvas, model) {
+  console.log('getPrediction');
   const tensor = preprocessCanvas(canvas);
   return model
     .then(loadedModel => loadedModel.predict(tensor).data())
-    .then(async prediction => await tf.argMax(prediction).data()); // returns an int32 containing the predicted class
-}
+    //.then(async prediction => await tf.argMax(prediction).data()); // returns an int32 containing the predicted class
+    .then(async (prediction) => {
+      console.log('prediction ', prediction);
+      let argMax = await tf.argMax(prediction).data();
+      console.log('prediction index', argMax);
+      return argMax;
+    });
+  }

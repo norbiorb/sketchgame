@@ -1,61 +1,125 @@
-import React, { useState, useContext, createContext, useEffect } from 'react';
-import { Controls } from './Controls';
-import { Canvas } from './Canvas'; 
+import React, { useState, useContext, useEffect, useReducer } from 'react';
+import { GameContext, PlayContext } from './Game';
 
-const RoundContext = createContext({});
-
+const STORE_RESULT = 'storeResult';
 const CORRECT = 'correct';
-const PLAYING = 'playing';
 const TIMEDOUT = 'timedout';
 
-const Round = (props) => {
-  let { prediction } = useContext(RoundContext);
-  let [seconds, setSeconds] = useState(props.seconds);
-  let [evaluation, setEvaluation] = useState(PLAYING);
-  const label = props.label;
+const useCountdown = (secondsPerRound, isActive) => {
+  const [seconds, setSeconds] = useState(secondsPerRound);
 
   useEffect(() => {
     let interval;
-    if (evaluation === PLAYING) {
-      interval = setInterval(() => {
-        seconds--;
-        if (prediction === label && seconds >= 0) {
-          setEvaluation(CORRECT);
-          clearInterval(interval);
-        } else if (prediction !== label && seconds < 0 ) {
-            setEvaluation(TIMEDOUT);
-            clearInterval(interval);        
-        } else {
-            setSeconds(seconds);
-        }
-      }, 1000, seconds);
+    if (isActive) {
+      if (seconds > 0) {
+        interval = setInterval(() => {
+          setSeconds(seconds => seconds - 1);
+        }, 1000);
+      } else {
+        clearInterval(interval);
+      } 
+    } else {
+      clearInterval(interval);
     }
 
-    return () => {if (interval) { clearInterval(interval); }};
+    return () => {
+      clearInterval(interval);
+    }
+  }, [seconds, isActive]);
 
-  }, [prediction, label, seconds, evaluation]);
+  return [seconds];
+};
 
-  switch (evaluation) {
-    case 'correct': 
-      return (<div><span>You correctly draw a {label}</span></div>);
-    case 'timedout':
-   return ( <div><span>You run out of time. draw a {label} and you draw a {prediction}</span></div> ) 
-    default:
-      return ( <div><span>You have {seconds} seconds to draw a {label} and you draw a {prediction}</span></div>)
-  }
+const Countdown = ({secondsPerRound, isActive, callback}) => {
+  let [seconds] = useCountdown(secondsPerRound, isActive);
+  callback(seconds);
+  return (<span>{seconds}</span>);
 }
-const useRounds = (seconds, labels) => {
-    let [prediction, setPrediction] = useState(''); // Sets default label to empty string.
 
-    let label = labels[0];
-    return (
-      <RoundContext.Provider  
-        value={{ label, seconds, prediction, setPrediction }} >
-          <Canvas />
-          <Controls />     
-          <Round label={labels[0]} seconds={seconds} />
-      </RoundContext.Provider>
-    );
-  };
+const Round = () => {
+  const { secondsPerRound, labels, dispatchPoints, setGameEnded } = useContext(GameContext);
+  let { roundState, dispatchRoundState, prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
 
-export { Round, useRounds, RoundContext };
+  let [solved, setSolved] = useState(false);
+  let [result, setResult] = useState('');
+
+  const label = labels[activeRound];
+ 
+  useEffect(() => {
+      console.log('round prediction', prediction);
+  }, [prediction]);
+
+  useEffect(() => {
+    setPrediction('');
+  }, [roundState, setPrediction]); 
+
+  useEffect(() => {
+    if (solved) {
+      dispatchActiveRound({ type: 'increment' });
+      dispatchRoundState({ 
+        type: STORE_RESULT,
+        payload: {
+          label: label,
+          result: result
+        }
+      });
+    }
+  }, [solved, result, label, dispatchActiveRound, dispatchRoundState]);
+
+  const isTimedout = (seconds) => {
+    if (seconds < 0) {
+      setResult(TIMEDOUT);
+      setSolved(true);
+    }
+  }
+
+  useEffect(() => {
+    const isCorrectPrediction = (label, prediction) => {
+      if (label === prediction)  { 
+        setResult(CORRECT);
+        setSolved(true);
+        dispatchPoints({type: 'increment'});     
+      }
+    }
+    console.log('isCorrectPrediction');
+    isCorrectPrediction(label, prediction);
+  }, [label, result, prediction, dispatchPoints, dispatchRoundState] );
+
+  return ( 
+    <div><div>Sketch Round {activeRound +1} of {labels.length} Rounds</div> 
+        {roundState.result === CORRECT && (<div><span>You correctly draw a {roundState.label}</span></div>)}
+        {roundState.result === TIMEDOUT &&  ( <div><span>You run out of time when drawing a {roundState.label}.</span></div> )}
+        <div>You have  
+          <Countdown key={label} secondsToPlay={secondsPerRound} isActive={true} callback={isTimedout}/> 
+             seconds to draw a {label} and you draw a {prediction}
+        </div>
+    </div>)
+}
+
+const useRounds = (labels, reduceRoundState, initialRoundState) => {
+
+  const reduceActiveRound = (state, action) => {
+    switch(action.type) {
+      case 'increment': 
+        return state + 1;
+      case 'reset':
+        return 0;
+      default:
+        return state;
+    }
+  }
+
+  let [activeRound, dispatchActiveRound] = useReducer(reduceActiveRound, 0);
+  let [roundState, dispatchRoundState] = useReducer(reduceRoundState, initialRoundState);
+
+  let rounds = Array.apply(null, labels).map(
+    (label, index) => {
+      return (activeRound === index) ? 
+         (<Round key={index} />) 
+        : null;    
+  });
+
+  return [rounds, activeRound, dispatchActiveRound, roundState, dispatchRoundState];
+};
+
+export { Round, useRounds, PlayContext };

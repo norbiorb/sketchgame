@@ -1,14 +1,10 @@
 import React, { useEffect, useContext } from "react";
 import { GameContext } from './Game';
-import { RoundContext } from './Round';
+import { PlayContext } from './Round';
 import { getPrediction } from "./helpers.js";
 function Controls() {
   const { model, ref, labels } = useContext(GameContext);
-  const { prediction, setPrediction } = useContext(RoundContext);
-
-  useEffect(() => {
-    console.log(prediction);
-  });
+  const { prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
 
   return (
     <div>
@@ -22,13 +18,23 @@ function Controls() {
         Clear the canvas.
       </button>
       <button
-        onClick={() =>
-          getPrediction(ref, model).then(prediction =>
-            setPrediction(labels[prediction[0]])
-          )
+        onClick={
+          () => {
+          getPrediction(ref, model)
+            .then((prediction) => {
+              return setPrediction(labels[prediction[0]])
+            })
+          }
         }
       >
         Predict the drawing.
+      </button>
+      <button
+        onClick={() => {
+          dispatchActiveRound({ type: 'increment' });
+        }}
+      >
+        Next Round
       </button>
     </div>
   );

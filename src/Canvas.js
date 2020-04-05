@@ -1,11 +1,10 @@
 import React, { useEffect, useContext } from 'react';
-import { getPrediction } from "./helpers.js";
 import { GameContext } from './Game';
 import { RoundContext } from './Round';
 
 const Canvas = React.forwardRef(() => {
 
-  const { model, ref, labels } = useContext(GameContext);
+  const { model, ref, labels, getPrediction } = useContext(GameContext);
   const { setPrediction } = useContext(RoundContext);
 
   let mouseDown = false;
@@ -30,8 +29,7 @@ const Canvas = React.forwardRef(() => {
 
   const handleMouseup = () => {
     getPrediction(ref, model).then((prediction) => {
-      console.log(labels[prediction[0]]);
-      setPrediction(labels[prediction[0]]);
+      return setPrediction(labels[prediction[0]]);
     });
     mouseDown = false;
     [lastX, lastY] = [undefined, undefined];

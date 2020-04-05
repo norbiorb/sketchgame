@@ -21,12 +21,13 @@ const Navigation = ({ model }) => {
   return (
   <Router>
     <Switch>
-      <Route exact path="/">
-        <App />
-      </Route>
+      <Route 
+        exact path="/"
+        render={(props) => <App key="game" {...props} model={model} />}
+      />
       <Route 
         exact path="/game"
-        render={(props) => <Game {...props} model={model} />} 
+        render={(props) => <Game key="game" {...props} model={model} />} 
       />
     </Switch>
   </Router>) 
