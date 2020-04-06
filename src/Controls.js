@@ -1,10 +1,10 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { GameContext } from './Game';
 import { PlayContext } from './Round';
 import { getPrediction } from "./helpers.js";
 function Controls() {
   const { model, ref, labels } = useContext(GameContext);
-  const { prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
+  const { setPrediction, dispatchActiveRound } = useContext(PlayContext);
 
   return (
     <div>

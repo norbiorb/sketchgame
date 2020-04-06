@@ -16,7 +16,7 @@ const ref = React.createRef();
 const STORE_RESULT = 'storeResult';
 
 const initialPoints = 0;
-const secondsPerRound = 4;
+const secondsPerRound = 20;
 
 const reducePoints = (pointsState, action) => {
   switch(action.type) {

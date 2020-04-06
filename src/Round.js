@@ -32,12 +32,16 @@ const useCountdown = (secondsPerRound, isActive) => {
 
 const Countdown = ({secondsPerRound, isActive, callback}) => {
   let [seconds] = useCountdown(secondsPerRound, isActive);
-  callback(seconds);
-  return (<span>{seconds}</span>);
+
+  useEffect(() => {
+    callback(seconds);
+  }, [seconds, callback]);
+  
+  return (<span> {seconds} </span>);
 }
 
 const Round = () => {
-  const { secondsPerRound, labels, dispatchPoints, setGameEnded } = useContext(GameContext);
+  const { secondsPerRound, labels, dispatchPoints } = useContext(GameContext);
   let { roundState, dispatchRoundState, prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
 
   let [solved, setSolved] = useState(false);
@@ -67,7 +71,7 @@ const Round = () => {
   }, [solved, result, label, dispatchActiveRound, dispatchRoundState]);
 
   const isTimedout = (seconds) => {
-    if (seconds < 0) {
+    if (seconds <= 0) {
       setResult(TIMEDOUT);
       setSolved(true);
     }
@@ -81,7 +85,7 @@ const Round = () => {
         dispatchPoints({type: 'increment'});     
       }
     }
-    console.log('isCorrectPrediction');
+
     isCorrectPrediction(label, prediction);
   }, [label, result, prediction, dispatchPoints, dispatchRoundState] );
 
@@ -90,7 +94,7 @@ const Round = () => {
         {roundState.result === CORRECT && (<div><span>You correctly draw a {roundState.label}</span></div>)}
         {roundState.result === TIMEDOUT &&  ( <div><span>You run out of time when drawing a {roundState.label}.</span></div> )}
         <div>You have  
-          <Countdown key={label} secondsToPlay={secondsPerRound} isActive={true} callback={isTimedout}/> 
+          <Countdown key={label} secondsPerRound={secondsPerRound} isActive={true} callback={isTimedout}/> 
              seconds to draw a {label} and you draw a {prediction}
         </div>
     </div>)
@@ -122,4 +126,4 @@ const useRounds = (labels, reduceRoundState, initialRoundState) => {
   return [rounds, activeRound, dispatchActiveRound, roundState, dispatchRoundState];
 };
 
-export { Round, useRounds, PlayContext };
+export { Round, useRounds, PlayContext, Countdown, useCountdown };

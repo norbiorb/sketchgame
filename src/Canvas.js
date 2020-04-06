@@ -1,11 +1,11 @@
 import React, { useEffect, useContext } from 'react';
 import { GameContext } from './Game';
-import { RoundContext } from './Round';
+import { PlayContext } from './Round';
 
 const Canvas = React.forwardRef(() => {
 
   const { model, ref, labels, getPrediction } = useContext(GameContext);
-  const { setPrediction } = useContext(RoundContext);
+  const { setPrediction } = useContext(PlayContext);
 
   let mouseDown = false;
   let lastX;
