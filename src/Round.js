@@ -44,7 +44,6 @@ const Round = () => {
   const { secondsPerRound, labels, dispatchPoints, ref } = useContext(GameContext);
   let { roundState, dispatchRoundState, prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
 
-  let [solved, setSolved] = useState(false);
   let [result, setResult] = useState('');
 
   const label = labels[activeRound];
@@ -52,7 +51,6 @@ const Round = () => {
   const isTimedout = (seconds) => {
     if (seconds <= 0) {
       setResult(TIMEDOUT);
-      setSolved(true);
     }
   }
 
@@ -71,7 +69,7 @@ const Round = () => {
   }, [roundState, setPrediction]); 
 
   useEffect(() => {
-    if (solved) {
+    if (result === CORRECT || result === TIMEDOUT) {
       dispatchActiveRound({ type: 'increment' });
       dispatchRoundState({ 
         type: STORE_RESULT,
@@ -80,21 +78,16 @@ const Round = () => {
           result: result
         }
       });
+      result === CORRECT &&  dispatchPoints({type: 'increment'});  
       clearCanvas(ref);
     }
-  }, [solved, result, label, dispatchActiveRound, dispatchRoundState, ref]);
+  }, [result, label, dispatchActiveRound, dispatchRoundState, dispatchPoints, ref]);
 
   useEffect(() => {
-    const isCorrectPrediction = (label, prediction) => {
       if (label === prediction)  { 
-        setResult(CORRECT);
-        setSolved(true);
-        dispatchPoints({type: 'increment'});     
+        setResult(CORRECT);  
       }
-    }
-
-    isCorrectPrediction(label, prediction);
-  }, [label, result, prediction, dispatchPoints, dispatchRoundState] );
+  }, [label, result, prediction] );
 
   return ( 
     <div><div>Sketch Round {activeRound +1} of {labels.length} Rounds</div> 
