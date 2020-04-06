@@ -41,13 +41,26 @@ const Countdown = ({secondsPerRound, isActive, callback}) => {
 }
 
 const Round = () => {
-  const { secondsPerRound, labels, dispatchPoints } = useContext(GameContext);
+  const { secondsPerRound, labels, dispatchPoints, ref } = useContext(GameContext);
   let { roundState, dispatchRoundState, prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
 
   let [solved, setSolved] = useState(false);
   let [result, setResult] = useState('');
 
   const label = labels[activeRound];
+
+  const isTimedout = (seconds) => {
+    if (seconds <= 0) {
+      setResult(TIMEDOUT);
+      setSolved(true);
+    }
+  }
+
+  const clearCanvas = (ref) => {
+    const canvas = ref.current;
+    const ctx = canvas.getContext("2d");
+    ctx.fillRect(0, 0, canvas.height, canvas.width);
+  }
  
   useEffect(() => {
       console.log('round prediction', prediction);
@@ -67,15 +80,9 @@ const Round = () => {
           result: result
         }
       });
+      clearCanvas(ref);
     }
-  }, [solved, result, label, dispatchActiveRound, dispatchRoundState]);
-
-  const isTimedout = (seconds) => {
-    if (seconds <= 0) {
-      setResult(TIMEDOUT);
-      setSolved(true);
-    }
-  }
+  }, [solved, result, label, dispatchActiveRound, dispatchRoundState, ref]);
 
   useEffect(() => {
     const isCorrectPrediction = (label, prediction) => {
@@ -126,4 +133,4 @@ const useRounds = (labels, reduceRoundState, initialRoundState) => {
   return [rounds, activeRound, dispatchActiveRound, roundState, dispatchRoundState];
 };
 
-export { Round, useRounds, PlayContext, Countdown, useCountdown };
+export { Round, useRounds, PlayContext };
