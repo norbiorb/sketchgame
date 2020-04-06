@@ -112,7 +112,9 @@ const Game = ({ model }) => {
   const [gameEnded, setGameEnded] = useState(false);
   
   const toggleGameEnded = () => {
+    gameEnded && dispatchPoints({type: 'reset'});
     setGameEnded(!gameEnded);
+    
   }
 
   return (
@@ -127,7 +129,7 @@ const Game = ({ model }) => {
           </div>
         </div>
         )
-      : (<Play key={gameEnded} />)
+      : (<Play />)
     }</GameContext.Provider>
   );
 }
