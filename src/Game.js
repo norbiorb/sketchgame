@@ -1,6 +1,8 @@
 import React, { useReducer, useEffect, useState, useContext, createContext } from "react";
 import { Link } from "react-router-dom";
 
+import { TypedText } from './TypedText';
+
 import { getPrediction } from "./helpers.js";
 import { useRounds } from './Round'; 
 import { Canvas } from './Canvas'; 
@@ -16,7 +18,7 @@ const ref = React.createRef();
 const STORE_RESULT = 'storeResult';
 
 const initialPoints = 0;
-const secondsPerRound = 20;
+const secondsPerRound = 5;
 
 const reducePoints = (pointsState, action) => {
   switch(action.type) {
@@ -34,22 +36,28 @@ const Result = (props) => {
   const maxPoints = props.maxPoints;
 
   const level = points/maxPoints;
+
+  const message = 
+    level >= 0.75 ? `Great Job! You won! You did ${points} out of ${maxPoints}! You like to play again?`
+    : level < 0.75 && level >= 0.5  ? `You won! Not bad! You did ${points} out of ${maxPoints}! Like to improve and play again?`
+    : `Whoops... you did ${points} out of ${maxPoints}! Try harder and play again!`;
+
+    return ( <TypedText strings={[message]} />);
+    /*
   if (level >= 0.75) {
     return (
-      <div>
-        Great Job! You did {points} out of {maxPoints}! You like to play again?
-      </div>)}
+        <TypedText strings={[`Great Job! You won! You did ${points} out of ${maxPoints}! You like to play again?`]} />)
+      }
   else if (level < 0.75 && level >= 0.5) {
     return (
-      <div>
-        Not bad! You did {points} out of {maxPoints}! Like to improve and play again?
-      </div>)} 
+        <TypedText strings={[`You won! Not bad! You did ${points} out of ${maxPoints}! Like to improve and play again?`]} />)
+      } 
   else {
     return (
-    <div>
-      Whoops... you did {points} out of {maxPoints}! Try harder and play again!
-    </div>)
-  }
+      <TypedText strings={[`Whoops... you did ${points} out of ${maxPoints}! Try harder and play again!`]}></TypedText>
+      //<TypedText>Whoops... you did {points} out of {maxPoints}! Try harder and play again!</TypedText>)
+    )}
+    */
 }
 
 const Play = () => { 
@@ -88,21 +96,36 @@ const Play = () => {
   const [prediction, setPrediction] = useState('');
 
   return (
-    <div>
-       <PlayContext.Provider value={{
+    <div className="nes-container with-title is-dark">
+    <h2 className="title">Sketch Round {activeRound +1} of {labels.length} Rounds</h2> 
+      <header className="header">
+        <Link className=" nes-btn" to="/">Home</Link> 
+      </header> 
+      <PlayContext.Provider value={{
             activeRound,
             dispatchActiveRound,
             roundState,
             dispatchRoundState,
             prediction,
             setPrediction
-          }}>
-        {round}
+      }}>   
+      <main className="main">   
         <Canvas />
-        <Controls />    
+        <div className="status">
+        {round}            
+        <Controls />
+        </div>  
+      </main> 
+      <button
+        className="nes-btn is-warning"
+        onClick={() => {
+          dispatchActiveRound({ type: 'increment' });
+        }}
+      >
+        Next Round
+      </button>
       </PlayContext.Provider>
-      <Link to="/">Home</Link>     
-    </div>
+    </div>      
   ) 
 }
 const Game = ({ model }) => {
@@ -122,14 +145,18 @@ const Game = ({ model }) => {
                                    dispatchPoints, getPrediction, toggleGameEnded }}>
     {gameEnded 
       ? (
-        <div>
+        <div className="nes-container is-dark with-title">
+           <h1 className="title">Sketch</h1> 
           <Result points={points} maxPoints={maxPoints} />
-          <div>
-            <button onClick={toggleGameEnded}>Play Again</button>
+            <div>
+            <button className="nes-btn is-warning flex-column" onClick={toggleGameEnded}>Play again</button>
+            </div>
+            <div>
+            <Link className="nes-btn " to="/">Home</Link>  
+            </div>
           </div>
-        </div>
         )
-      : (<Play />)
+      : (<Play className="nes-container is-dark" />)
     }</GameContext.Provider>
   );
 }

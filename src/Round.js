@@ -1,50 +1,21 @@
 import React, { useState, useContext, useEffect, useReducer } from 'react';
 import { GameContext, PlayContext } from './Game';
 
+import TimedText from './TimedText';
+
 const STORE_RESULT = 'storeResult';
 const CORRECT = 'correct';
 const TIMEDOUT = 'timedout';
-
-const useCountdown = (secondsPerRound, isActive) => {
-  const [seconds, setSeconds] = useState(secondsPerRound);
-
-  useEffect(() => {
-    let interval;
-    if (isActive) {
-      if (seconds > 0) {
-        interval = setInterval(() => {
-          setSeconds(seconds => seconds - 1);
-        }, 1000);
-      } else {
-        clearInterval(interval);
-      } 
-    } else {
-      clearInterval(interval);
-    }
-
-    return () => {
-      clearInterval(interval);
-    }
-  }, [seconds, isActive]);
-
-  return [seconds];
-};
-
-const Countdown = ({secondsPerRound, isActive, callback}) => {
-  let [seconds] = useCountdown(secondsPerRound, isActive);
-
-  useEffect(() => {
-    callback(seconds);
-  }, [seconds, callback]);
-  
-  return (<span> {seconds} </span>);
-}
 
 const Round = () => {
   const { secondsPerRound, labels, dispatchPoints, ref } = useContext(GameContext);
   let { roundState, dispatchRoundState, prediction, setPrediction, activeRound, dispatchActiveRound } = useContext(PlayContext);
 
   let [result, setResult] = useState('');
+
+  let [answer, setAnswer] = useState('Let\s start.');
+  let [questionStart, setQuestionStart] = useState('You have ');
+  let [questionEnd, setQuestionEnd] = useState('to draw this');
 
   const label = labels[activeRound];
 
@@ -59,7 +30,7 @@ const Round = () => {
     const ctx = canvas.getContext("2d");
     ctx.fillRect(0, 0, canvas.height, canvas.width);
   }
- 
+
   useEffect(() => {
       console.log('round prediction', prediction);
   }, [prediction]);
@@ -78,7 +49,7 @@ const Round = () => {
           result: result
         }
       });
-      result === CORRECT &&  dispatchPoints({type: 'increment'});  
+      result === CORRECT &&  dispatchPoints({type: 'increment'}); 
       clearCanvas(ref);
     }
   }, [result, label, dispatchActiveRound, dispatchRoundState, dispatchPoints, ref]);
@@ -89,15 +60,29 @@ const Round = () => {
       }
   }, [label, result, prediction] );
 
+  useEffect((() => {
+    console.log(`message update, result: ${roundState.result} label ${roundState.label}`);
+
+    let answer = roundState.result ===  CORRECT ? `You correctly draw a ${roundState.label}. ` 
+              : roundState.result ===  TIMEDOUT ? `You run out of time when drawing a ${roundState.label}. ` 
+              : activeRound === 0 ? 'Let\'s start. ' : '';
+
+    setAnswer(answer);
+    let questionStart = `You have now` ;
+    setQuestionStart(questionStart);
+    let questionEnd = `seconds to draw a ${label}`;
+    setQuestionEnd(questionEnd);
+
+  }), [roundState.result, roundState.label, label, activeRound]);
+
   return ( 
-    <div><div>Sketch Round {activeRound +1} of {labels.length} Rounds</div> 
-        {roundState.result === CORRECT && (<div><span>You correctly draw a {roundState.label}</span></div>)}
-        {roundState.result === TIMEDOUT &&  ( <div><span>You run out of time when drawing a {roundState.label}.</span></div> )}
-        <div>You have  
-          <Countdown key={label} secondsPerRound={secondsPerRound} isActive={true} callback={isTimedout}/> 
-             seconds to draw a {label} and you draw a {prediction}
-        </div>
-    </div>)
+    <TimedText 
+      key={label} 
+      label={label} 
+      strings={{answer, questionStart, secondsPerRound, questionEnd}} 
+      callback={isTimedout}
+      />
+  );
 }
 
 const useRounds = (labels, reduceRoundState, initialRoundState) => {

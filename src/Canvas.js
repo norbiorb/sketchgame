@@ -48,12 +48,11 @@ const Canvas = React.forwardRef(() => {
   useEffect(() => {
     const canvas = ref.current;
     const context = canvas.getContext("2d");
-
     context.fillStyle = "#ffffff";
-    //context.fillRect(0, 0, canvas.height, canvas.width);
-  });
+  }, [ref]);
 
   return (
+    <div className="canvas-wrapper">
     <canvas
       height={300}
       width={300}
@@ -61,8 +60,8 @@ const Canvas = React.forwardRef(() => {
       onMouseDown={() => (mouseDown = true)}
       onMouseUp={handleMouseup}
       onMouseMove={e => handleMousemove(e)}
-      style={{ border: '1px solid #000000' }} 
-    />
+      style={{ backgroundColor: "#ffffff" }} 
+    /></div>
   );
 });
   

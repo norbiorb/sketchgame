@@ -1,11 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import * as tf from "@tensorflow/tfjs";
+
 import "./index.css";
 import App from "./App";
 import Game from "./Game";
 import * as serviceWorker from "./serviceWorker";
-import * as tf from "@tensorflow/tfjs";
+
+import Layout from "./Layout";
+
+
 
 async function loadModel() {
   console.log("Model loading...");
@@ -19,15 +24,15 @@ const Navigation = ({ model }) => {
 
   console.log(model);
   return (
-  <Router>
+  <Router key="game">
     <Switch>
       <Route 
         exact path="/"
-        render={(props) => <App key="game" {...props} model={model} />}
+        render={(props) => <App {...props} model={model} />}
       />
       <Route 
         exact path="/game"
-        render={(props) => <Game key="game" {...props} model={model} />} 
+        render={(props) => <Game  {...props} model={model} />} 
       />
     </Switch>
   </Router>) 
