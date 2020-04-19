@@ -16,7 +16,7 @@ const TimedText = (props) => {
   let interval;
 
   const countdown = (s) => { 
-    let timeleft = s;
+    let timeleft = s-1;
     interval = setInterval(function(){
       if(timeleft <= 0){
         clearInterval(interval);

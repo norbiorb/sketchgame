@@ -1,11 +1,17 @@
 import React, { useEffect, useContext } from 'react';
-import { GameContext } from './Game';
-import { PlayContext } from './Round';
+import { GameContext, PlayContext } from './Game';
 
 const Canvas = React.forwardRef(() => {
+  const STORE_RESULT = 'storeResult';
+  const CORRECT ='correct';
+  const { dispatchRoundState, activeRound, dispatchActiveRound } = useContext(PlayContext);
+  const { model, ref, labels, dispatchPoints, getPrediction } = useContext(GameContext);
 
-  const { model, ref, labels, getPrediction } = useContext(GameContext);
-  const { setPrediction } = useContext(PlayContext);
+  const clearCanvas = (ref) => {
+    const canvas = ref.current;
+    const ctx = canvas.getContext("2d");
+    ctx.fillRect(0, 0, canvas.height, canvas.width);
+  }
 
   let mouseDown = false;
   let lastX;
@@ -29,7 +35,19 @@ const Canvas = React.forwardRef(() => {
 
   const handleMouseup = () => {
     getPrediction(ref, model).then((prediction) => {
-      return setPrediction(labels[prediction[0]]);
+      console.log(`prediction: ${labels[prediction[0]]}`);
+      if (labels[activeRound] === labels[prediction[0]]) {
+        clearCanvas(ref);
+        dispatchActiveRound({ type: 'increment' });
+        dispatchRoundState({
+          type: STORE_RESULT,
+          payload: {
+            label: labels[activeRound],
+            result: CORRECT
+          }
+        });
+        dispatchPoints({type: 'increment'});
+      }
     });
     mouseDown = false;
     [lastX, lastY] = [undefined, undefined];

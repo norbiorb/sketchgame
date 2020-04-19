@@ -18,7 +18,7 @@ const ref = React.createRef();
 const STORE_RESULT = 'storeResult';
 
 const initialPoints = 0;
-const secondsPerRound = 5;
+const secondsPerRound = 20;
 
 const reducePoints = (pointsState, action) => {
   switch(action.type) {
@@ -43,21 +43,6 @@ const Result = (props) => {
     : `Whoops... you did ${points} out of ${maxPoints}! Try harder and play again!`;
 
     return ( <TypedText strings={[message]} />);
-    /*
-  if (level >= 0.75) {
-    return (
-        <TypedText strings={[`Great Job! You won! You did ${points} out of ${maxPoints}! You like to play again?`]} />)
-      }
-  else if (level < 0.75 && level >= 0.5) {
-    return (
-        <TypedText strings={[`You won! Not bad! You did ${points} out of ${maxPoints}! Like to improve and play again?`]} />)
-      } 
-  else {
-    return (
-      <TypedText strings={[`Whoops... you did ${points} out of ${maxPoints}! Try harder and play again!`]}></TypedText>
-      //<TypedText>Whoops... you did {points} out of {maxPoints}! Try harder and play again!</TypedText>)
-    )}
-    */
 }
 
 const Play = () => { 
@@ -93,8 +78,6 @@ const Play = () => {
 
   let round = rounds[activeRound];
 
-  const [prediction, setPrediction] = useState('');
-
   return (
     <div className="nes-container with-title is-dark">
     <h2 className="title">Sketch Round {activeRound +1} of {labels.length} Rounds</h2> 
@@ -105,9 +88,7 @@ const Play = () => {
             activeRound,
             dispatchActiveRound,
             roundState,
-            dispatchRoundState,
-            prediction,
-            setPrediction
+            dispatchRoundState
       }}>   
       <main className="main">   
         <Canvas />
