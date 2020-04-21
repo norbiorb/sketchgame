@@ -5,11 +5,12 @@ const Canvas = React.forwardRef(() => {
   const STORE_RESULT = 'storeResult';
   const CORRECT ='correct';
   const { dispatchRoundState, activeRound, dispatchActiveRound } = useContext(PlayContext);
-  const { model, ref, labels, dispatchPoints, getPrediction } = useContext(GameContext);
+  const { model, ref, dispatchPoints, getPrediction, labels, indices } = useContext(GameContext);
 
   const clearCanvas = (ref) => {
     const canvas = ref.current;
     const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.height, canvas.width);
   }
 
@@ -34,9 +35,13 @@ const Canvas = React.forwardRef(() => {
   }
 
   const handleMouseup = () => {
-    getPrediction(ref, model).then((prediction) => {
-      console.log(`prediction: ${labels[prediction[0]]}`);
-      if (labels[activeRound] === labels[prediction[0]]) {
+    getPrediction(ref, model).then((prediction) => {   
+      const label = labels[activeRound];
+
+      // use permutation indices to get the correct label
+      console.log(`prediction=${labels[indices[prediction[0]]]}`)
+      if (label === labels[indices[prediction[0]]]) {
+        dispatchPoints({type: 'increment'});
         clearCanvas(ref);
         dispatchActiveRound({ type: 'increment' });
         dispatchRoundState({
@@ -46,7 +51,6 @@ const Canvas = React.forwardRef(() => {
             result: CORRECT
           }
         });
-        dispatchPoints({type: 'increment'});
       }
     });
     mouseDown = false;
@@ -64,9 +68,7 @@ const Canvas = React.forwardRef(() => {
   };
 
   useEffect(() => {
-    const canvas = ref.current;
-    const context = canvas.getContext("2d");
-    context.fillStyle = "#ffffff";
+    clearCanvas(ref);
   }, [ref]);
 
   return (

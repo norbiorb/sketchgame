@@ -19,8 +19,6 @@ const Round = () => {
 
   const label = labels[activeRound];
 
-  console.log('round ', activeRound);
-
   const isTimedout = (seconds) => {
     if (seconds <= 0) {
       setResult(TIMEDOUT);

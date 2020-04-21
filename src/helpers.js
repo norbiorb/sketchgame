@@ -1,7 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 
 function preprocessCanvas(canvas) {
-  console.log('preprocessCanvas');
   // Preprocess image for the network
   let tensor = tf
     .browser
@@ -15,15 +14,31 @@ function preprocessCanvas(canvas) {
 }
 
 export function getPrediction(canvas, model) {
-  console.log('getPrediction');
   const tensor = preprocessCanvas(canvas);
   return model
     .then(loadedModel => loadedModel.predict(tensor).data())
     //.then(async prediction => await tf.argMax(prediction).data()); // returns an int32 containing the predicted class
     .then(async (prediction) => {
-      console.log('prediction ', prediction);
+      console.log('getPrediction: prediction ', prediction);
       let argMax = await tf.argMax(prediction).data();
       console.log('prediction index', argMax);
       return argMax;
     });
+  }
+
+  export function shuffle(labels) {
+    const len = labels.length;
+    const indices = Array.from(Array(len).keys())
+    const shuffled = new Array(len);
+    for (let i = 0; i < len-1; i++) {
+      let idx = i + Math.floor(Math.random() * (len-i));
+      let tmp = indices[idx];
+      indices[idx]= indices[i];
+      indices[i] = tmp;
+    }
+    // fill new labels array
+    for (let i = 0; i < len; i++) {
+      shuffled[indices[i]] = labels[i];
+    }
+    return [shuffled, indices];
   }

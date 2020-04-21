@@ -8,7 +8,12 @@ import { useRounds } from './Round';
 import { Canvas } from './Canvas'; 
 import { Controls } from './Controls';
 
-const labels = require("./labels.json");
+import { shuffle } from './helpers.js';
+
+const labelsOrig = require("./labels.json");
+
+let [labels, indices] = shuffle(labelsOrig);
+console.log(`Shuffled ${labels} ${indices}`);
 
 const GameContext = createContext({});
 const PlayContext = createContext({});
@@ -46,7 +51,7 @@ const Result = (props) => {
 }
 
 const Play = () => { 
-  const { toggleGameEnded } = useContext(GameContext);
+  const { toggleGameEnded, labels } = useContext(GameContext);
 
   const reduceRoundState = (state, action) => {
     const { type, payload } = action;
@@ -74,7 +79,7 @@ const Play = () => {
     if (activeRound === labels.length) {
       toggleGameEnded();
     }
-  }, [activeRound, toggleGameEnded]);
+  }, [activeRound, toggleGameEnded, labels]);
 
   let round = rounds[activeRound];
 
@@ -110,20 +115,30 @@ const Play = () => {
   ) 
 }
 const Game = ({ model }) => {
-  const maxPoints = labels.length; 
+  const maxPoints = labelsOrig.length; 
   const [points, dispatchPoints] = useReducer(reducePoints, initialPoints);
 
   const [gameEnded, setGameEnded] = useState(false);
-  
+
   const toggleGameEnded = () => {
-    gameEnded && dispatchPoints({type: 'reset'});
+    if (gameEnded) {
+      [labels, indices] = shuffle(labelsOrig);
+      dispatchPoints({type: 'reset'});   
+    }  
     setGameEnded(!gameEnded);
-    
   }
 
   return (
-    <GameContext.Provider value={{ model, ref, labels, secondsPerRound, 
-                                   dispatchPoints, getPrediction, toggleGameEnded }}>
+    <GameContext.Provider value={{ 
+      model, 
+      ref, 
+      secondsPerRound, 
+      dispatchPoints, 
+      getPrediction, 
+      toggleGameEnded,
+      labels,
+      indices
+    }}>
     {gameEnded 
       ? (
         <div className="nes-container is-dark with-title">
