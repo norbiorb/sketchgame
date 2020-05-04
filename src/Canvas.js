@@ -1,12 +1,11 @@
 import React, { useEffect, useContext } from 'react';
-import { GameContext, PlayContext } from './Game';
-
+import { GameContext } from './Game';
+import { PlayContext } from './Play';
 const Canvas = React.forwardRef(() => {
-  const STORE_RESULT = 'storeResult';
-  const CORRECT ='correct';
-  const { dispatchRoundState, activeRound, dispatchActiveRound } = useContext(PlayContext);
-  const { model, ref, dispatchPoints, getPrediction, labels, indices } = useContext(GameContext);
 
+  const { ref } = useContext(GameContext);
+  const { handlePrediction } = useContext(PlayContext);
+ 
   const clearCanvas = (ref) => {
     const canvas = ref.current;
     const ctx = canvas.getContext("2d");
@@ -35,24 +34,7 @@ const Canvas = React.forwardRef(() => {
   }
 
   const handleMouseup = () => {
-    getPrediction(ref, model).then((prediction) => {   
-      const label = labels[activeRound];
-
-      // use permutation indices to get the correct label
-      console.log(`prediction=${labels[indices[prediction[0]]]}`)
-      if (label === labels[indices[prediction[0]]]) {
-        dispatchPoints({type: 'increment'});
-        clearCanvas(ref);
-        dispatchActiveRound({ type: 'increment' });
-        dispatchRoundState({
-          type: STORE_RESULT,
-          payload: {
-            label: labels[activeRound],
-            result: CORRECT
-          }
-        });
-      }
-    });
+    handlePrediction();
     mouseDown = false;
     [lastX, lastY] = [undefined, undefined];
   };

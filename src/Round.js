@@ -1,74 +1,45 @@
 import React, { useState, useContext, useEffect, useReducer } from 'react';
-import { GameContext, PlayContext } from './Game';
+import { GameContext } from './Game';
+import { PlayContext } from './Play';
 
-import TimedText from './TimedText';
-
-const STORE_RESULT = 'storeResult';
-const CORRECT = 'correct';
-const TIMEDOUT = 'timedout';
+import { TimedText } from './TimedText';
 
 const Round = () => {
-  const { secondsPerRound, labels, ref } = useContext(GameContext);
-  const { roundState, dispatchRoundState, activeRound, dispatchActiveRound } = useContext(PlayContext);
+  const { secondsPerRound, labels, bonustime, CORRECT ,TIMEDOUT } = useContext(GameContext);
+  const { roundState, activeRound, handleTimeout } = useContext(PlayContext);
   
-  let [result, setResult] = useState('');
-
-  const [answer, setAnswer] = useState('Let\s start.');
-  const [questionStart, setQuestionStart] = useState('You have ');
-  const [questionEnd, setQuestionEnd] = useState('to draw this');
-
   const label = labels[activeRound];
 
-  const isTimedout = (seconds) => {
-    if (seconds <= 0) {
-      setResult(TIMEDOUT);
-    }
-  }
-
-  const clearCanvas = (ref) => {
-    const canvas = ref.current;
-    const ctx = canvas.getContext("2d");
-    ctx.fillRect(0, 0, canvas.height, canvas.width);
-  }
-
-  useEffect(() => {
-    if (result === TIMEDOUT) {
-      clearCanvas(ref);
-      dispatchActiveRound({ type: 'increment' });
-      dispatchRoundState({ 
-        type: STORE_RESULT,
-        payload: {
-          label: label,
-          result: result
-        }
-      });
-    }
-  }, [result, label, dispatchActiveRound, dispatchRoundState, ref]);
-
+  const [answer, setAnswer] = useState('Let\'s start');
+  const [questionStart, setQuestionStart] = useState('You have');
+  const [questionEnd, setQuestionEnd] = useState(`seconds to draw a ${label} in the canvas on the left.`);
+  
   useEffect((() => {
-    console.log(`message update, roundState result: ${roundState.result} roundState label ${roundState.label}`);
-    console.log(`message update, result: ${result} label ${label} activeRound ${activeRound}`);
+    if (activeRound !== 0) {
+      let answer = roundState.result ===  CORRECT ? 
+        roundState.timeUsed <= bonustime ? `You know that was an awsome ${roundState.label} sketch in only ${roundState.timeUsed} seconds.` 
+        : `Correct. You draw a ${roundState.label} in ${roundState.timeUsed} seconds. Can you go faster? ` 
+      : roundState.result ===  TIMEDOUT ? `You run out of time when drawing a ${roundState.label}. ` 
+      : '';
 
-    let answer = roundState.result ===  CORRECT ? `You correctly draw a ${roundState.label}. ` 
-              : roundState.result ===  TIMEDOUT ? `You run out of time when drawing a ${roundState.label}. ` 
-              : activeRound === 0 ? 'Let\'s start. ' : '';
-
-    setAnswer(answer);
-    let questionStart = `You have now` ;
-    setQuestionStart(questionStart);
-    let questionEnd = `seconds to draw a ${label}`;
-    setQuestionEnd(questionEnd);
-    setResult('');
-
-  }), [roundState.result, roundState.label, label, activeRound, result, setResult]);
+      setAnswer(answer);
+      let questionStart = `You have now` ;
+      setQuestionStart(questionStart);
+      let questionEnd = `seconds to draw a ${label}`;
+      setQuestionEnd(questionEnd);
+    }
+  }), [activeRound, roundState.result, roundState.label, roundState.timeUsed, label, bonustime, CORRECT, TIMEDOUT]);
 
   return ( 
-    <TimedText 
-      key={label} 
-      label={label} 
-      strings={{answer, questionStart, secondsPerRound, questionEnd}} 
-      callback={isTimedout}
-      />
+    <div className="status">
+      <TimedText 
+        key={label} 
+        label={label} 
+        strings={{answer, questionStart, secondsPerRound, questionEnd}} 
+        callback={handleTimeout}
+      > 
+      </TimedText>
+    </div>
   );
 }
 

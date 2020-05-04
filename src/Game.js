@@ -1,13 +1,10 @@
-import React, { useReducer, useEffect, useState, useContext, createContext } from "react";
+import React, { useReducer, useState, createContext } from "react";
 import { Link } from "react-router-dom";
 
+import { Play } from './Play';
 import { TypedText } from './TypedText';
 
 import { getPrediction } from "./helpers.js";
-import { useRounds } from './Round'; 
-import { Canvas } from './Canvas'; 
-import { Controls } from './Controls';
-
 import { shuffle } from './helpers.js';
 
 const labelsOrig = require("./labels.json");
@@ -16,19 +13,39 @@ let [labels, indices] = shuffle(labelsOrig);
 console.log(`Shuffled ${labels} ${indices}`);
 
 const GameContext = createContext({});
-const PlayContext = createContext({});
 
 const ref = React.createRef();
 
 const STORE_RESULT = 'storeResult';
+const CORRECT = 'correct';
+const TIMEDOUT = 'timedout';
 
-const initialPoints = 0;
+//const initialPoints = 0;
 const secondsPerRound = 20;
+const bonustime = 5;
+
+const initialPoints = {
+  points: 0,
+  bonus: 0
+}
+
+const hasBonus = (time) => {
+  return time <= bonustime;
+}
 
 const reducePoints = (pointsState, action) => {
   switch(action.type) {
     case 'increment': 
-      return pointsState + 1;
+      if (hasBonus(action.payload.timeUsed)) {
+        return {
+          points: pointsState.points + 1,
+          bonus: pointsState.bonus + 1
+        };
+      } else {
+        return {...pointsState, 
+          points: pointsState.points + 1
+        };
+      }
     case 'reset':
       return initialPoints;
     default:
@@ -37,86 +54,24 @@ const reducePoints = (pointsState, action) => {
 }
 
 const Result = (props) => {
-  const points = props.points;
-  const maxPoints = props.maxPoints;
+  const { pointsState, maxPoints } = props;
+  const points = pointsState.points;
+  const bonus = pointsState.bonus;
 
   const level = points/maxPoints;
 
   const message = 
-    level >= 0.75 ? `Great Job! You won! You did ${points} out of ${maxPoints}! You like to play again?`
-    : level < 0.75 && level >= 0.5  ? `You won! Not bad! You did ${points} out of ${maxPoints}! Like to improve and play again?`
-    : `Whoops... you did ${points} out of ${maxPoints}! Try harder and play again!`;
+    level >= 0.75 ? `Great Job! You won! You did ${points} out of ${maxPoints} and too ${bonus} bonus points for sketching fast! You like to play again?`
+    : level < 0.75 && level >= 0.5  ? `You won! Not bad! You did ${points} out of ${maxPoints} with a bonus of ${bonus} points for sketching fast. Like to improve and play again?`
+    : `Whoops... you did ${points} out of ${maxPoints}!  Your additional bonus is ${bonus} points for sketching fast.Try harder and play again!`;
 
     return ( <TypedText strings={[message]} />);
 }
 
-const Play = () => { 
-  const { toggleGameEnded, labels } = useContext(GameContext);
 
-  const reduceRoundState = (state, action) => {
-    const { type, payload } = action;
-    switch (type) {
-      case STORE_RESULT: 
-        let newState = {...state, 
-          label: payload.label, 
-          result: payload.result};
-          console.log('reduceRoundState ', newState);
-          return newState;
-      default:
-        return state;
-    }
-  }
-
-  const initialRoundState = {
-    label: '',
-    result: ''
-  };
-
-  const [rounds, activeRound, dispatchActiveRound, roundState, dispatchRoundState] 
-          = useRounds(labels, reduceRoundState, initialRoundState);
-
-  useEffect(() => {
-    if (activeRound === labels.length) {
-      toggleGameEnded();
-    }
-  }, [activeRound, toggleGameEnded, labels]);
-
-  let round = rounds[activeRound];
-
-  return (
-    <div className="nes-container with-title is-dark">
-    <h2 className="title">Sketch Round {activeRound +1} of {labels.length} Rounds</h2> 
-      <header className="header">
-        <Link className=" nes-btn" to="/">Home</Link> 
-      </header> 
-      <PlayContext.Provider value={{
-            activeRound,
-            dispatchActiveRound,
-            roundState,
-            dispatchRoundState
-      }}>   
-      <main className="main">   
-        <Canvas />
-        <div className="status">
-        {round}            
-        <Controls />
-        </div>  
-      </main> 
-      <button
-        className="nes-btn is-warning"
-        onClick={() => {
-          dispatchActiveRound({ type: 'increment' });
-        }}
-      >
-        Next Round
-      </button>
-      </PlayContext.Provider>
-    </div>      
-  ) 
-}
 const Game = ({ model }) => {
   const maxPoints = labelsOrig.length; 
-  const [points, dispatchPoints] = useReducer(reducePoints, initialPoints);
+  const [pointsState, dispatchPoints] = useReducer(reducePoints, initialPoints);
 
   const [gameEnded, setGameEnded] = useState(false);
 
@@ -137,13 +92,17 @@ const Game = ({ model }) => {
       getPrediction, 
       toggleGameEnded,
       labels,
-      indices
+      indices,
+      STORE_RESULT,
+      CORRECT,
+      TIMEDOUT,
+      bonustime
     }}>
     {gameEnded 
       ? (
         <div className="nes-container is-dark with-title">
            <h1 className="title">Sketch</h1> 
-          <Result points={points} maxPoints={maxPoints} />
+          <Result pointsState={pointsState} maxPoints={maxPoints} />
             <div>
             <button className="nes-btn is-warning flex-column" onClick={toggleGameEnded}>Play again</button>
             </div>
@@ -158,4 +117,4 @@ const Game = ({ model }) => {
 }
 
 export default Game;
-export { GameContext, PlayContext };
+export { GameContext };

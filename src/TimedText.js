@@ -1,7 +1,10 @@
-import React, {useEffect } from "react";
+import React, {useEffect, useContext } from "react";
 import Typed from 'typed.js';
+import { PlayContext } from './Play';
 
 const TimedText = (props) => {
+
+  const { timerRef } = useContext(PlayContext);
 
   const { answer, questionStart, secondsPerRound, questionEnd } = props.strings;
   const callback = props.callback;
@@ -17,13 +20,13 @@ const TimedText = (props) => {
 
   const countdown = (s) => { 
     let timeleft = s-1;
-    interval = setInterval(function(){
-      if(timeleft <= 0){
-        clearInterval(interval);
+    interval = setInterval(function() {
+      if(timeleft <= 0) {
         callback(timeleft);
+        clearInterval(interval);       
       } else {
-        if (timeleft < 10) document.getElementById("typed3").innerHTML = '0' + timeleft;
-        else document.getElementById("typed3").innerHTML = timeleft;
+        if (timeleft < 10) timerRef.current.innerHTML = '0' + timeleft;
+        else timerRef.current.innerHTML = timeleft;
       }
       timeleft -= 1;
     }, 1000);
@@ -76,13 +79,13 @@ const TimedText = (props) => {
       <div className="type-wrap">
         <span className="typed_span" id="typed1" />
         <span className="typed_span" id="typed2" />
-        <span className="typed_span countdown" id="typed3" />
+        <span ref={timerRef} className="typed_span countdown" id="typed3" />
         <span className="typed_span" id="typed4"/>
       </div>
     </React.Fragment>
   );
   }
 
-  export default TimedText;
+  export { TimedText };
 
   
