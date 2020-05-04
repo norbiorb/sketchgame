@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react';
+
 import { GameContext } from './Game';
 import { PlayContext } from './Play';
 const Canvas = React.forwardRef(() => {
@@ -54,8 +55,7 @@ const Canvas = React.forwardRef(() => {
   }, [ref]);
 
   return (
-    <div className="canvas-wrapper">
-    <canvas
+    <canvas className="canvas"
       height={300}
       width={300}
       ref={ref}
@@ -63,7 +63,7 @@ const Canvas = React.forwardRef(() => {
       onMouseUp={handleMouseup}
       onMouseMove={e => handleMousemove(e)}
       style={{ backgroundColor: "#ffffff" }} 
-    /></div>
+    />
   );
 });
   

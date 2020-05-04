@@ -1,5 +1,6 @@
 import React, {useEffect, useContext } from "react";
 import Typed from 'typed.js';
+
 import { PlayContext } from './Play';
 
 const TimedText = (props) => {
@@ -9,7 +10,7 @@ const TimedText = (props) => {
   const { answer, questionStart, secondsPerRound, questionEnd } = props.strings;
   const callback = props.callback;
 
-  let baseOptions = {
+  const baseOptions = {
     typeSpeed: 40,
     contentType: 'html',
     showCursor: true,
@@ -33,32 +34,31 @@ const TimedText = (props) => {
   } 
 
   useEffect(() => {
-      const options1 = {
-          ...baseOptions, 
-          strings: [answer], 
-          onComplete: () => typed2.start()
-      }
-
-      let options2 = {
-          ...baseOptions, 
-          strings: [questionStart], 
-          onComplete: () => typed3.start()
-      }
-      const options3 = {
-          ...baseOptions,
-          strings: [`${secondsPerRound}`], 
-          onComplete: () => typed4.start()
-      }
-      const options4 = {
-          ...baseOptions,
-          strings: [questionEnd], 
-          onComplete: () => countdown(secondsPerRound)
-      }
+    const options1 = {
+        ...baseOptions, 
+        strings: [answer], 
+        onComplete: () => typed2.start()
+    }
+    let options2 = {
+        ...baseOptions, 
+        strings: [questionStart], 
+        onComplete: () => typed3.start()
+    }
+    const options3 = {
+        ...baseOptions,
+        strings: [`${secondsPerRound}`], 
+        onComplete: () => typed4.start()
+    }
+    const options4 = {
+        ...baseOptions,
+        strings: [questionEnd], 
+        onComplete: () => countdown(secondsPerRound)
+    }
         
-  let typed1 = new Typed('#typed1', options1);
-  let typed2 = new Typed('#typed2', options2);
-  let typed3 = new Typed('#typed3', options3);
-  let typed4 = new Typed('#typed4', options4);
+    const typed1 = new Typed('#typed1', options1);
+    const typed2 = new Typed('#typed2', options2);
+    const typed3 = new Typed('#typed3', options3);
+    const typed4 = new Typed('#typed4', options4);
 
     typed1.start();
     typed2.stop();
@@ -75,17 +75,15 @@ const TimedText = (props) => {
   });
 
   return (
-    <React.Fragment>
-      <div className="type-wrap">
-        <span className="typed_span" id="typed1" />
-        <span className="typed_span" id="typed2" />
-        <span ref={timerRef} className="typed_span countdown" id="typed3" />
-        <span className="typed_span" id="typed4"/>
-      </div>
-    </React.Fragment>
+    <div>
+      <span className="typed" id="typed1" />
+      <span className="typed" id="typed2" />
+      <span ref={timerRef} className="typed" id="typed3" />
+      <span className="typed" id="typed4"/>
+    </div>
   );
-  }
+}
 
-  export { TimedText };
+export { TimedText };
 
   

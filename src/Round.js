@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useReducer } from 'react';
+
 import { GameContext } from './Game';
 import { PlayContext } from './Play';
-
 import { TimedText } from './TimedText';
 
 const Round = () => {
@@ -17,8 +17,8 @@ const Round = () => {
   useEffect((() => {
     if (activeRound !== 0) {
       let answer = roundState.result ===  CORRECT ? 
-        roundState.timeUsed <= bonustime ? `You know that was an awsome ${roundState.label} sketch in only ${roundState.timeUsed} seconds.` 
-        : `Correct. You draw a ${roundState.label} in ${roundState.timeUsed} seconds. Can you go faster? ` 
+        roundState.timeUsed <= bonustime ? `You know you made an awsome ${roundState.label} sketch in only ${roundState.timeUsed} seconds!` 
+        : `Well Done! You draw a ${roundState.label} in ${roundState.timeUsed} seconds. Can you do faster? ` 
       : roundState.result ===  TIMEDOUT ? `You run out of time when drawing a ${roundState.label}. ` 
       : '';
 
@@ -31,7 +31,7 @@ const Round = () => {
   }), [activeRound, roundState.result, roundState.label, roundState.timeUsed, label, bonustime, CORRECT, TIMEDOUT]);
 
   return ( 
-    <div className="status">
+    <div className="status-text">
       <TimedText 
         key={label} 
         label={label} 
@@ -56,10 +56,10 @@ const useRounds = (labels, reduceRoundState, initialRoundState) => {
     }
   }
 
-  let [activeRound, dispatchActiveRound] = useReducer(reduceActiveRound, 0);
-  let [roundState, dispatchRoundState] = useReducer(reduceRoundState, initialRoundState);
+  const [activeRound, dispatchActiveRound] = useReducer(reduceActiveRound, 0);
+  const [roundState, dispatchRoundState] = useReducer(reduceRoundState, initialRoundState);
 
-  let rounds = Array.apply(null, labels).map(
+  const rounds = Array.apply(null, labels).map(
     (label, index) => {
       return (activeRound === index) ? 
          (<Round key={index} />) 

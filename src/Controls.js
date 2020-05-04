@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
+
 import { GameContext } from './Game';
-import { PlayContext } from './Round';
-import { getPrediction } from "./helpers.js";
+
 function Controls() {
   const { ref } = useContext(GameContext);
 
   return (
+    <div className="controls">
       <button
-        className="nes-btn is-warning controls"
+        className="nes-btn is-warning controls-button"
         onClick={() => {
           const canvas = ref.current;
           const ctx = canvas.getContext("2d");
@@ -16,6 +17,7 @@ function Controls() {
       >
         Clear Canvas
       </button>
+    </div>
   );
 }
 

@@ -20,7 +20,6 @@ const STORE_RESULT = 'storeResult';
 const CORRECT = 'correct';
 const TIMEDOUT = 'timedout';
 
-//const initialPoints = 0;
 const secondsPerRound = 20;
 const bonustime = 5;
 
@@ -101,15 +100,17 @@ const Game = ({ model }) => {
     {gameEnded 
       ? (
         <div className="nes-container is-dark with-title">
-           <h1 className="title">Sketch</h1> 
-          <Result pointsState={pointsState} maxPoints={maxPoints} />
-            <div>
+           <h1 className="title">Sketch</h1>
+           <div className="result">
+            <Result pointsState={pointsState} maxPoints={maxPoints} />
+          </div> 
+          <div>
             <button className="nes-btn is-warning flex-column" onClick={toggleGameEnded}>Play again</button>
-            </div>
-            <div>
-            <Link className="nes-btn " to="/">Home</Link>  
-            </div>
           </div>
+          <div>
+            <Link className="nes-btn " to="/">Home</Link>  
+          </div>
+        </div>
         )
       : (<Play className="nes-container is-dark" />)
     }</GameContext.Provider>
