@@ -7,7 +7,6 @@ import { TimedText } from './TimedText';
 const Round = () => {
   const { secondsPerRound, labels, bonustime, CORRECT ,TIMEDOUT } = useContext(GameContext);
   const { roundState, activeRound, handleTimeout } = useContext(PlayContext);
-  
   const label = labels[activeRound];
 
   const [answer, setAnswer] = useState('Let\'s start');

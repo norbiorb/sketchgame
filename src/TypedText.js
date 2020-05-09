@@ -2,9 +2,9 @@ import React from 'react';
 import Typed from 'typed.js';
 
 class TypedText extends React.Component {
-
+  
   baseOptions = {
-    typeSpeed: 40,
+    typeSpeed: 20,
     showCursor: false,
     contentType: 'html'
   };  
@@ -16,19 +16,20 @@ class TypedText extends React.Component {
       ...this.baseOptions, 
       strings: strings
     }
-    this.typed = new Typed(this.el, options);
+    this.typed = new Typed(this.props.timerRef ? this.props.timerRef : this.el, options); 
     this.typed.start(); 
   }
   
   componentWillUnmount() {
-    this.typed.destroy();
+    if (this.typed) this.typed.destroy();
   }
   
   render() {
     return (
           <span
+            id={this.props.id ? this.props.id : ''}
             className="typed"
-            ref={(el) => { this.el = el; }}
+            ref={this.props.timerRef ? this.props.timerRef : (el) => { this.el = el; }}
           />
     );
   }

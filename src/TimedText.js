@@ -5,13 +5,13 @@ import { PlayContext } from './Play';
 
 const TimedText = (props) => {
 
-  const { timerRef } = useContext(PlayContext);
+  const { timerRef, setTime } = useContext(PlayContext);
 
   const { answer, questionStart, secondsPerRound, questionEnd } = props.strings;
   const callback = props.callback;
 
   const baseOptions = {
-    typeSpeed: 40,
+    typeSpeed: 20,
     contentType: 'html',
     showCursor: true,
     cursorChar: ' ',
@@ -26,8 +26,7 @@ const TimedText = (props) => {
         callback(timeleft);
         clearInterval(interval);       
       } else {
-        if (timeleft < 10) timerRef.current.innerHTML = '0' + timeleft;
-        else timerRef.current.innerHTML = timeleft;
+        setTime(timerRef, timeleft);
       }
       timeleft -= 1;
     }, 1000);
@@ -54,12 +53,12 @@ const TimedText = (props) => {
         strings: [questionEnd], 
         onComplete: () => countdown(secondsPerRound)
     }
-        
+
     const typed1 = new Typed('#typed1', options1);
     const typed2 = new Typed('#typed2', options2);
     const typed3 = new Typed('#typed3', options3);
     const typed4 = new Typed('#typed4', options4);
-
+    
     typed1.start();
     typed2.stop();
     typed3.stop();

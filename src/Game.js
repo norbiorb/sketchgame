@@ -4,14 +4,11 @@ import { Link } from "react-router-dom";
 import { Play } from './Play';
 import { TypedText } from './TypedText';
 
-import { getPrediction } from "./helpers.js";
-import { shuffle } from './helpers.js';
+import { getPrediction, shuffle } from "./helpers.js";
 
 const labelsOrig = require("./labels.json");
 
 let [labels, indices] = shuffle(labelsOrig);
-console.log(`Shuffled ${labels} ${indices}`);
-
 const GameContext = createContext({});
 
 const ref = React.createRef();

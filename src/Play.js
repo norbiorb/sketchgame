@@ -34,7 +34,6 @@ const Play = () => {
           result: payload.result,
           timeUsed: payload.timeUsed
           };
-          console.log('reduceRoundState ', newState);
           return newState;
       default:
         return state;
@@ -70,6 +69,10 @@ const Play = () => {
   const getTime = (timerRef) => {
     return timerRef.current.innerHTML;
   }
+
+  const setTime = (timerRef,time) => {
+    timerRef.current.innerHTML = time;
+  }
   
   const handleTimeout = (timeleft) => {
     if (timeleft <= 0) {
@@ -86,45 +89,50 @@ const Play = () => {
       });
     }
   }
-  
-  const handlePrediction = () => {
-    getPrediction(ref, model, timerRef).then((prediction) => {   
-      const label = labels[activeRound];
 
-        // use permutation indices to get the correct label
-      const predictedLabel = labels[indices[prediction[0]]];
-      
-      if (label === predictedLabel) {
-        const timeleft = parseInt(getTime(timerRef));
+  const processCorrectPrediction = () => {
+    const timeleft = parseInt(getTime(timerRef));
 
-        // in case a sketch is done before initializing the new round
-        if (!Number.isNaN(timeleft)) {
-          const timeUsed = secondsPerRound - timeleft;
-          console.log('Time Used', timeUsed)
-          setResult(CORRECT);
-          dispatchPoints({type: 'increment', 
-            payload: {
-              timeUsed: timeUsed,
-            }
-          });
-          clearCanvas(ref);
-          dispatchActiveRound({ type: 'increment' });
-    
-          dispatchRoundState({
-            type: STORE_RESULT,
-            payload: {
-              label: labels[activeRound],
-              result: CORRECT,
-              timeUsed: timeUsed
-            }
-          });
+    // in case a sketch is done before initializing the new round
+    if (!Number.isNaN(timeleft)) {
+      const timeUsed = secondsPerRound - timeleft;
+      setResult(CORRECT);
+      dispatchPoints({type: 'increment', 
+        payload: {
+          timeUsed: timeUsed,
         }
-      } else {
-        console.log('canvas prediction wrong: ', predictedLabel);
-      }
-    });
-  };
+      });
+      clearCanvas(ref);
+      dispatchActiveRound({ type: 'increment' });
+
+      dispatchRoundState({
+        type: STORE_RESULT,
+        payload: {
+          label: labels[activeRound],
+          result: CORRECT,
+          timeUsed: timeUsed
+        }
+      });
+    }
+  }
+
+  const evaluatePrediction = (prediction) => {   
+    const label = labels[activeRound];
+
+    // use permutation indices to get the correct label
+    const predictedLabel = labels[indices[prediction[0]]];
+    if (label === predictedLabel) {
+      processCorrectPrediction();
+    } else {
+      console.log('Predicted Label: ', predictedLabel);
+    }
+  }
   
+  const handlePrediction = async () => {
+    const prediction = await getPrediction(ref, model);
+    evaluatePrediction(prediction);
+  }; 
+
   return (
     <div className="nes-container with-title is-dark">
     <h2 className="title">Sketch Round {activeRound +1} of {labels.length} Rounds</h2> 
@@ -139,6 +147,7 @@ const Play = () => {
             result,
             setResult,
             timerRef,
+            setTime,
             handlePrediction,
             handleTimeout
       }}>   
