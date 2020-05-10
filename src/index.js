@@ -9,8 +9,7 @@ import Game from "./Game";
 import * as serviceWorker from "./serviceWorker";
 
 const Navigation = ({ model }) => {
-
-  console.log(model);
+  
   return (
   <Router key="game">
     <Switch>

@@ -1,4 +1,4 @@
-import React, { useReducer, useState, createContext } from "react";
+import React, { useReducer, useState, createContext, createRef } from "react";
 import { Link } from "react-router-dom";
 
 import { Play } from './Play';
@@ -11,13 +11,13 @@ const labelsOrig = require("./labels.json");
 let [labels, indices] = shuffle(labelsOrig);
 const GameContext = createContext({});
 
-const ref = React.createRef();
+const ref = createRef();
 
 const STORE_RESULT = 'storeResult';
 const CORRECT = 'correct';
 const TIMEDOUT = 'timedout';
 
-const secondsPerRound = 20;
+const secondsPerRound = 5;
 const bonustime = 5;
 
 const initialPoints = {
