@@ -17,7 +17,7 @@ const STORE_RESULT = 'storeResult';
 const CORRECT = 'correct';
 const TIMEDOUT = 'timedout';
 
-const secondsPerRound = 5;
+const secondsPerRound = 20;
 const bonustime = 5;
 
 const initialPoints = {
