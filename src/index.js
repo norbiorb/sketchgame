@@ -11,7 +11,7 @@ import * as serviceWorker from "./serviceWorker";
 const Navigation = ({ model }) => {
   
   return (
-  <Router key="game">
+  <Router key="game" basename={process.env.PUBLIC_URL}>
     <Switch>
       <Route 
         exact path="/"
