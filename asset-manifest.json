@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/project-react-c1-s8-3204-1657/static/css/main.717e10bb.chunk.css",
-    "main.js": "/project-react-c1-s8-3204-1657/static/js/main.a7f5bcdc.chunk.js",
-    "main.js.map": "/project-react-c1-s8-3204-1657/static/js/main.a7f5bcdc.chunk.js.map",
-    "runtime-main.js": "/project-react-c1-s8-3204-1657/static/js/runtime-main.a70a530d.js",
-    "runtime-main.js.map": "/project-react-c1-s8-3204-1657/static/js/runtime-main.a70a530d.js.map",
-    "static/css/2.bc82e399.chunk.css": "/project-react-c1-s8-3204-1657/static/css/2.bc82e399.chunk.css",
-    "static/js/2.5a68f7f5.chunk.js": "/project-react-c1-s8-3204-1657/static/js/2.5a68f7f5.chunk.js",
-    "static/js/2.5a68f7f5.chunk.js.map": "/project-react-c1-s8-3204-1657/static/js/2.5a68f7f5.chunk.js.map",
-    "index.html": "/project-react-c1-s8-3204-1657/index.html",
-    "precache-manifest.169a9ac988fc886ca5c6e46522f37f9c.js": "/project-react-c1-s8-3204-1657/precache-manifest.169a9ac988fc886ca5c6e46522f37f9c.js",
-    "service-worker.js": "/project-react-c1-s8-3204-1657/service-worker.js",
-    "static/css/2.bc82e399.chunk.css.map": "/project-react-c1-s8-3204-1657/static/css/2.bc82e399.chunk.css.map",
-    "static/css/main.717e10bb.chunk.css.map": "/project-react-c1-s8-3204-1657/static/css/main.717e10bb.chunk.css.map",
-    "static/js/2.5a68f7f5.chunk.js.LICENSE.txt": "/project-react-c1-s8-3204-1657/static/js/2.5a68f7f5.chunk.js.LICENSE.txt"
+    "main.css": "/Sketch/static/css/main.717e10bb.chunk.css",
+    "main.js": "/Sketch/static/js/main.2fd8a7d9.chunk.js",
+    "main.js.map": "/Sketch/static/js/main.2fd8a7d9.chunk.js.map",
+    "runtime-main.js": "/Sketch/static/js/runtime-main.2d73856a.js",
+    "runtime-main.js.map": "/Sketch/static/js/runtime-main.2d73856a.js.map",
+    "static/css/2.bc82e399.chunk.css": "/Sketch/static/css/2.bc82e399.chunk.css",
+    "static/js/2.57db5c96.chunk.js": "/Sketch/static/js/2.57db5c96.chunk.js",
+    "static/js/2.57db5c96.chunk.js.map": "/Sketch/static/js/2.57db5c96.chunk.js.map",
+    "index.html": "/Sketch/index.html",
+    "precache-manifest.6cc46314b388402d0f6463a20af69ad8.js": "/Sketch/precache-manifest.6cc46314b388402d0f6463a20af69ad8.js",
+    "service-worker.js": "/Sketch/service-worker.js",
+    "static/css/2.bc82e399.chunk.css.map": "/Sketch/static/css/2.bc82e399.chunk.css.map",
+    "static/css/main.717e10bb.chunk.css.map": "/Sketch/static/css/main.717e10bb.chunk.css.map",
+    "static/js/2.57db5c96.chunk.js.LICENSE.txt": "/Sketch/static/js/2.57db5c96.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.a70a530d.js",
+    "static/js/runtime-main.2d73856a.js",
     "static/css/2.bc82e399.chunk.css",
-    "static/js/2.5a68f7f5.chunk.js",
+    "static/js/2.57db5c96.chunk.js",
     "static/css/main.717e10bb.chunk.css",
-    "static/js/main.a7f5bcdc.chunk.js"
+    "static/js/main.2fd8a7d9.chunk.js"
   ]
 }
